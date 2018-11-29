@@ -82,21 +82,20 @@ def help(bot, trigger):
 
 def create_list(bot, msg):
     msg = 'Command listing for {}@{}\n\n'.format(bot.nick, bot.config.core.host) + msg
-    payload = {"content": msg}
-    headers = {'Content-type': 'application/json', 'Accept': 'application/json'}
+    headers = {'Content-type': 'text/plain', 'Accept': 'application/json'}
 
     try:
-        result = requests.post('https://ptpb.pw/', json=payload, headers=headers)
+        result = requests.post('https://hastebin.com/documents', data=msg, headers=headers)
     except requests.RequestException:
         bot.say("Sorry! Something went wrong.")
         logger.exception("Error posting commands")
         return
     result = result.json()
-    if 'url' not in result:
+    if 'key' not in result:
         bot.say("Sorry! Something went wrong.")
         logger.error("Invalid result %s", result)
         return
-    return result['url']
+    return 'https://hastebin.com/{}'.format(result['key'])
 
 
 @rule('$nick' r'(?i)help(?:[?!]+)?$')
